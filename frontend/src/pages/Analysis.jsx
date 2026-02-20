@@ -7,7 +7,7 @@ import LawyerCard from '../components/LawyerCard';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import './Analysis.css';
 
-const API = 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function Analysis() {
     const [loading, setLoading] = useState(false);

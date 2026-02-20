@@ -5,7 +5,7 @@ import LawyerCard from '../components/LawyerCard';
 import { FaWifi, FaExclamationTriangle } from 'react-icons/fa';
 import './Lawyers.css';
 
-const API = 'http://localhost:5000';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const CATS = ['All', 'Consumer Law', 'Property Law', 'Cyber Law', 'Criminal Law', 'Family Law', 'Labour Law'];
 
 /* ─── Demo lawyers shown when backend is offline ─── */
