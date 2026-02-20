@@ -12,27 +12,43 @@ SPECIALIZATION_MAP = {
 
 def get_lawyers_by_specializations(specializations: list, limit: int = 3) -> list:
     db = get_db()
-    lawyers = list(
-        db.lawyers.find(
-            {"specializations": {"$in": specializations}},
-            {"_id": 0}
-        ).sort("rating", -1).limit(limit)
-    )
-    return lawyers
+    if db is None:
+        return []
+    try:
+        return list(
+            db.lawyers.find(
+                {"specializations": {"$in": specializations}},
+                {"_id": 0}
+            ).sort("rating", -1).limit(limit)
+        )
+    except Exception as e:
+        print(f"[WARNING] Failed to get lawyers by specialization: {e}")
+        return []
 
 def get_top_lawyers(limit: int = 10) -> list:
     db = get_db()
-    lawyers = list(
-        db.lawyers.find({}, {"_id": 0}).sort("rating", -1).limit(limit)
-    )
-    return lawyers
+    if db is None:
+        return []
+    try:
+        return list(
+            db.lawyers.find({}, {"_id": 0}).sort("rating", -1).limit(limit)
+        )
+    except Exception as e:
+        print(f"[WARNING] Failed to get top lawyers: {e}")
+        return []
 
 def get_lawyers_by_filter(specialization: str = None, limit: int = None) -> list:
     db = get_db()
-    query = {}
-    if specialization:
-        query["specializations"] = specialization
-    cursor = db.lawyers.find(query, {"_id": 0}).sort("rating", -1)
-    if limit:
-        cursor = cursor.limit(limit)
-    return list(cursor)
+    if db is None:
+        return []
+    try:
+        query = {}
+        if specialization:
+            query["specializations"] = specialization
+        cursor = db.lawyers.find(query, {"_id": 0}).sort("rating", -1)
+        if limit:
+            cursor = cursor.limit(limit)
+        return list(cursor)
+    except Exception as e:
+        print(f"[WARNING] Failed to get lawyers by filter: {e}")
+        return []
