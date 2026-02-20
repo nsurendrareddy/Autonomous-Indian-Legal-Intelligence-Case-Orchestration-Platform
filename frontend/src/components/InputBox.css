@@ -1,0 +1,134 @@
+.input-box {
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.input-box-textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 14px 16px;
+    resize: none;
+    outline: none;
+    transition: var(--transition);
+    line-height: 1.6;
+}
+
+.input-box-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.input-box-textarea:focus {
+    border-color: var(--primary);
+    background: rgba(108, 99, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.12);
+}
+
+.image-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+}
+
+.image-preview-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.image-preview-img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+}
+
+.image-remove-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.image-remove-btn:hover {
+    background: #e05555;
+    transform: scale(1.1);
+}
+
+.image-preview-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.input-box-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+.input-box-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.icon-btn:hover {
+    background: rgba(108, 99, 255, 0.15);
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
+.hint {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.analyze-btn {
+    min-width: 160px;
+    justify-content: center;
+}
+
+.btn-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}

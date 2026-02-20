@@ -1,0 +1,119 @@
+.lawyer-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.lawyer-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.lawyer-avatar {
+    flex-shrink: 0;
+}
+
+.lawyer-photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+}
+
+.lawyer-avatar-placeholder {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    border: 2px solid rgba(108, 99, 255, 0.4);
+}
+
+.lawyer-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.lawyer-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lawyer-stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 2px;
+}
+
+.star-filled {
+    color: var(--gold);
+    font-size: 12px;
+}
+
+.star-empty {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.lawyer-rating-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.lawyer-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.lawyer-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.meta-icon {
+    color: var(--primary-light);
+    font-size: 14px;
+}
+
+.lawyer-contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.contact-link:hover {
+    color: var(--primary-light);
+    background: rgba(108, 99, 255, 0.08);
+    border-color: var(--border-hover);
+}

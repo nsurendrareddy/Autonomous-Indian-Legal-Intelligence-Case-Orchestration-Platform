@@ -1,0 +1,72 @@
+.demo-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 179, 71, 0.08);
+    border: 1px solid rgba(255, 179, 71, 0.25);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    margin-bottom: 22px;
+    color: var(--warning);
+    font-size: 0.87rem;
+    line-height: 1.5;
+    flex-wrap: wrap;
+}
+
+.demo-banner span {
+    flex: 1;
+}
+
+.demo-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.retry-btn {
+    background: rgba(255, 179, 71, 0.15);
+    border: 1px solid rgba(255, 179, 71, 0.4);
+    border-radius: 6px;
+    color: var(--warning);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.retry-btn:hover:not(:disabled) {
+    background: rgba(255, 179, 71, 0.25);
+}
+
+.retry-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.lawyers-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.lawyers-grid {
+    margin-top: 0;
+}
+
+.loading-center {
+    display: flex;
+    justify-content: center;
+    padding: 60px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

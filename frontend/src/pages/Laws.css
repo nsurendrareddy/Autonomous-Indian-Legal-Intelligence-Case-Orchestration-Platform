@@ -1,0 +1,169 @@
+.demo-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 179, 71, 0.08);
+    border: 1px solid rgba(255, 179, 71, 0.25);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    margin-bottom: 22px;
+    color: var(--warning);
+    font-size: 0.87rem;
+    line-height: 1.5;
+    flex-wrap: wrap;
+}
+
+.demo-banner span {
+    flex: 1;
+}
+
+.demo-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+.retry-btn {
+    background: rgba(255, 179, 71, 0.15);
+    border: 1px solid rgba(255, 179, 71, 0.4);
+    border-radius: 6px;
+    color: var(--warning);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.retry-btn:hover:not(:disabled) {
+    background: rgba(255, 179, 71, 0.25);
+}
+
+.retry-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.laws-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+}
+
+.search-icon {
+    color: var(--text-muted);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.laws-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.cat-btn {
+    padding: 7px 16px;
+    border-radius: var(--radius-full);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.cat-btn:hover {
+    background: rgba(108, 99, 255, 0.08);
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+.cat-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(108, 99, 255, 0.3);
+}
+
+.laws-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.law-card {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.law-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.law-section-num {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.law-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.law-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.law-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.law-meta strong {
+    color: var(--text-secondary);
+}
+
+.loading-center {
+    display: flex;
+    justify-content: center;
+    padding: 60px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+}
