@@ -29,7 +29,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -45,6 +45,18 @@ app.include_router(legal_sections_router, prefix="/api")
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "message": "LegalAssist API is running"}
+
+@app.get("/api/debug")
+async def debug():
+    """Debug endpoint — check env vars are loaded (safe: only shows key presence, not value)"""
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    mongo_uri = os.getenv("MONGODB_URI", "")
+    return {
+        "groq_key_set": bool(groq_key) and len(groq_key) > 10,
+        "groq_key_prefix": groq_key[:8] + "..." if groq_key else "NOT SET",
+        "mongo_uri_set": bool(mongo_uri) and "mongodb" in mongo_uri,
+        "port": os.getenv("PORT", "5000")
+    }
 
 @app.get("/")
 async def root():
