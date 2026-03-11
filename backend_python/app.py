@@ -12,6 +12,8 @@ from routes.analysis import router as analysis_router
 from routes.chatbot import router as chatbot_router
 from routes.lawyers import router as lawyers_router
 from routes.legal_sections import router as legal_sections_router
+from routes.auth import router as auth_router
+from routes.history import router as history_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,11 +30,17 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -41,6 +49,10 @@ app.include_router(analysis_router, prefix="/api")
 app.include_router(chatbot_router, prefix="/api")
 app.include_router(lawyers_router, prefix="/api")
 app.include_router(legal_sections_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+app.include_router(history_router, prefix="/api")
+
+
 
 @app.get("/api/health")
 async def health():

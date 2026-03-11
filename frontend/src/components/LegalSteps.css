@@ -190,3 +190,17 @@
         display: none;
     }
 }
+
+/* -- LINKS -- */
+.lr-link {
+    color: var(--primary, #6c63ff);
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px dashed var(--primary, #6c63ff);
+    transition: all 0.2s ease;
+}
+
+.lr-link:hover {
+    color: var(--primary-dark, #5048e5);
+    border-bottom: 1px solid var(--primary-dark, #5048e5);
+}

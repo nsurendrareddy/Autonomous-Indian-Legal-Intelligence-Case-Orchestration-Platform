@@ -49,6 +49,32 @@ function parseReport(reportText) {
     return sections;
 }
 
+function renderFormattedText(text) {
+    if (!text) return null;
+    const tokenRegex = /(\[[^\]]+\]\([^)]+\)|\*\*.*?\*\*)/g;
+    const parts = text.split(tokenRegex);
+    
+    return parts.map((part, index) => {
+        if (!part) return null;
+        
+        const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (linkMatch) {
+            return (
+                <a key={index} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="lr-link">
+                    {linkMatch[1]}
+                </a>
+            );
+        }
+        
+        const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
+        if (boldMatch) {
+            return <strong key={index}>{boldMatch[1]}</strong>;
+        }
+        
+        return <React.Fragment key={index}>{part}</React.Fragment>;
+    });
+}
+
 function renderBody(body) {
     const lines = body.split('\n');
     const elements = [];
@@ -64,29 +90,26 @@ function renderBody(body) {
         }
 
         if (trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
-            // Bullet point
             elements.push(
                 <div key={i} className="lr-bullet">
                     <span className="lr-bullet-dot">•</span>
-                    <span>{trimmed.replace(/^[-•]\s*/, '')}</span>
+                    <span>{renderFormattedText(trimmed.replace(/^[-•]\s*/, ''))}</span>
                 </div>
             );
         } else if (/^\d+\.\s/.test(trimmed) && trimmed.length < 80) {
-            // Numbered sub-item (short — likely a label)
             elements.push(
                 <div key={i} className="lr-numbered">
                     <span className="lr-num-badge">{trimmed.match(/^(\d+)\./)[1]}</span>
-                    <span>{trimmed.replace(/^\d+\.\s*/, '')}</span>
+                    <span>{renderFormattedText(trimmed.replace(/^\d+\.\s*/, ''))}</span>
                 </div>
             );
         } else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-            // Bold label
             elements.push(
-                <p key={i} className="lr-bold-line">{trimmed.replace(/\*\*/g, '')}</p>
+                <p key={i} className="lr-bold-line">{renderFormattedText(trimmed.replace(/\*\*/g, ''))}</p>
             );
         } else {
             elements.push(
-                <p key={i} className="lr-paragraph">{trimmed}</p>
+                <p key={i} className="lr-paragraph">{renderFormattedText(trimmed)}</p>
             );
         }
         i++;

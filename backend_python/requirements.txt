@@ -7,3 +7,5 @@ pydantic
 aiofiles
 python-multipart
 groq
+passlib[bcrypt]
+python-jose[cryptography]

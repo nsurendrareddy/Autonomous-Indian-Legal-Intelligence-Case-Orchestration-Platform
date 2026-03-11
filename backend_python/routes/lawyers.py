@@ -6,7 +6,7 @@ router = APIRouter()
 
 @router.get("/lawyers/top")
 async def top_lawyers():
-    return get_top_lawyers(10)
+    return get_top_lawyers(50)
 
 @router.get("/lawyers")
 async def lawyers(specialization: Optional[str] = Query(None), limit: Optional[int] = Query(None)):

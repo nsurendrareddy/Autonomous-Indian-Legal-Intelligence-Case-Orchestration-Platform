@@ -2,26 +2,43 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaRobot, FaTimes, FaPaperPlane } from 'react-icons/fa';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './FloatingChatbot.css';
+
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export default function FloatingChatbot() {
+    const { token } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
+
     const [messages, setMessages] = useState([
         { role: 'bot', text: 'Hi! I\'m your AI legal assistant. Ask me anything about Indian law or your legal issue.' }
     ]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [analysisContext, setAnalysisContext] = useState(null);
+    const [sessionId, setSessionId] = useState('');
     const bottomRef = useRef(null);
 
     useEffect(() => {
         if (isOpen) {
+            // Generate a unique session ID for history grouping
+            if (!sessionId) {
+                const newId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+                setSessionId(newId);
+            }
+
             const stored = localStorage.getItem('latestAnalysis');
             if (stored && stored.trim()) {
                 setAnalysisContext(stored); // plain text report
             }
+        } else {
+            // Optional: reset session when closed so next open is a new history item
+            // I'll leave the session active until page refresh to allow continuing chat, 
+            // but the user requested: "single session until the user closes the bot".
+            setSessionId('');
+            setMessages([{ role: 'bot', text: 'Hi! I\'m your AI legal assistant. Ask me anything about Indian law or your legal issue.' }]);
         }
     }, [isOpen]);
 
@@ -36,16 +53,19 @@ export default function FloatingChatbot() {
         setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
         setLoading(true);
         try {
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const { data } = await axios.post(`${API}/api/chatbot`, {
                 message: userMsg,
+                sessionId: sessionId,
                 analysisContext: analysisContext || undefined
-            });
+            }, { headers });
             setMessages(prev => [...prev, { role: 'bot', text: data.response }]);
         } catch {
             setMessages(prev => [...prev, { role: 'bot', text: 'Sorry, I\'m having trouble connecting. Please try again.' }]);
         }
         setLoading(false);
     };
+
 
     return (
         <>

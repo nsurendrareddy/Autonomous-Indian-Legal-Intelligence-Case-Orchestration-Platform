@@ -25,8 +25,12 @@ export default function Analysis() {
             formData.append('query', query);
             if (image) formData.append('image', image);
 
+            const token = localStorage.getItem('la_token');
             const { data } = await axios.post(`${API}/api/analysis`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: { 
+                    'Content-Type': 'multipart/form-data',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
             });
 
             setAnalysis(data.analysis);

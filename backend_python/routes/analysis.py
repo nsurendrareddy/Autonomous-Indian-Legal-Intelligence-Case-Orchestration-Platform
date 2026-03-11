@@ -1,12 +1,28 @@
-from fastapi import APIRouter, Form, File, UploadFile, HTTPException
+from fastapi import APIRouter, Form, File, UploadFile, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
 from services.groq_service import analyze_legal_issue
 from models.case import save_case
 from models.lawyer import get_lawyers_by_specializations, get_top_lawyers, SPECIALIZATION_MAP
+from models.history import save_analysis_history
 from middleware.upload import save_upload
 import re
 
 router = APIRouter()
+security = HTTPBearer(auto_error=False)
+
+
+def _get_user_id(credentials) -> Optional[str]:
+    if credentials is None:
+        return None
+    try:
+        import os
+        from jose import jwt
+        payload = jwt.decode(credentials.credentials, os.getenv("SECRET_KEY", ""), algorithms=[os.getenv("ALGORITHM", "HS256")])
+        return payload.get("sub")
+    except Exception:
+        return None
+
 
 
 def detect_category(report_text: str) -> str:
@@ -32,7 +48,8 @@ def detect_category(report_text: str) -> str:
 async def analyze(
     query: str = Form(...),
     image: Optional[UploadFile] = File(None),
-    imageContext: Optional[str] = Form(None)
+    imageContext: Optional[str] = Form(None),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
 ):
     if not query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty")
@@ -87,6 +104,11 @@ async def analyze(
         "imageUrl": image_url
     }
     save_case(case_data)
+
+    # Save to user history if logged in
+    user_id = _get_user_id(credentials)
+    if user_id:
+        save_analysis_history(user_id, query, category, report_text)
 
     return {
         "analysis": {
