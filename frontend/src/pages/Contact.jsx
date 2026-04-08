@@ -32,7 +32,7 @@ export default function Contact() {
 
         try {
             const response = await fetch(
-                "http://localhost:5678/webhook-test/contact-us",
+                "http://localhost:5678/webhook/contact-us",
                 {
                     method: "POST",
                     headers: {
