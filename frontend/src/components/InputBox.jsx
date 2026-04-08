@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaMicrophone, FaMicrophoneSlash, FaImage, FaTimes, FaSearch } from 'react-icons/fa';
+import { FaMicrophone, FaMicrophoneSlash, FaImage, FaTimes, FaSearch, FaExclamationCircle } from 'react-icons/fa';
 import './InputBox.css';
 
 const MAX_IMAGES = 2;
@@ -10,60 +10,85 @@ export default function InputBox({ onAnalyze, loading }) {
     const [images, setImages] = useState([]);
     const [previews, setPreviews] = useState([]);
     const [listening, setListening] = useState(false);
+    const [micError, setMicError] = useState(null);   // visible error shown in UI
     const fileRef = useRef(null);
     const recognitionRef = useRef(null);
 
-    // ── Voice Recognition (native Web Speech API – works on Render/HTTPS) ───
+    // ── Voice Recognition (native Web Speech API) ────────────────────────────
     const toggleMic = () => {
+        setMicError(null);
+
+        // --- Browser support check ---
         const SpeechRecognition =
             window.SpeechRecognition || window.webkitSpeechRecognition;
 
         if (!SpeechRecognition) {
-            alert(
-                'Speech recognition is not supported in this browser.\n' +
-                'Please use Google Chrome or Microsoft Edge.'
-            );
+            setMicError('Speech recognition is not supported. Please use Chrome or Edge.');
             return;
         }
 
-        // If already listening, stop
+        // --- Stop if already listening ---
         if (listening) {
-            recognitionRef.current?.stop();
+            try { recognitionRef.current?.stop(); } catch (_) {}
             setListening(false);
             return;
         }
 
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-IN';
+        // --- Start recognition ---
+        try {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-IN';
 
-        recognition.onstart = () => setListening(true);
+            recognition.onstart = () => {
+                setListening(true);
+                setMicError(null);
+            };
 
-        recognition.onresult = (e) => {
-            let fullTranscript = '';
-            for (let i = 0; i < e.results.length; i++) {
-                fullTranscript += e.results[i][0].transcript;
-            }
-            setQuery(fullTranscript);
-        };
+            recognition.onresult = (e) => {
+                let fullTranscript = '';
+                for (let i = 0; i < e.results.length; i++) {
+                    fullTranscript += e.results[i][0].transcript;
+                }
+                setQuery(fullTranscript);
+            };
 
-        recognition.onerror = (e) => {
+            recognition.onerror = (e) => {
+                setListening(false);
+                switch (e.error) {
+                    case 'not-allowed':
+                    case 'permission-denied':
+                        setMicError(
+                            'Microphone access was denied. Click the 🔒 icon in your browser address bar and allow microphone, then try again.'
+                        );
+                        break;
+                    case 'no-speech':
+                        setMicError('No speech detected. Please speak clearly and try again.');
+                        break;
+                    case 'network':
+                        setMicError('Network error: voice recognition requires an internet connection.');
+                        break;
+                    case 'service-not-allowed':
+                        setMicError(
+                            'Speech service blocked by browser policy. ' +
+                            'Make sure the site is loaded over HTTPS and microphone is not blocked in browser settings.'
+                        );
+                        break;
+                    default:
+                        setMicError(`Voice input error: ${e.error}. Please try again.`);
+                }
+            };
+
+            recognition.onend = () => setListening(false);
+
+            recognitionRef.current = recognition;
+            recognition.start();
+
+        } catch (err) {
             setListening(false);
-            if (e.error === 'not-allowed') {
-                alert(
-                    'Microphone permission was denied.\n' +
-                    'Please allow microphone access in your browser settings and try again.'
-                );
-            } else if (e.error !== 'aborted') {
-                console.error('Speech recognition error:', e.error);
-            }
-        };
-
-        recognition.onend = () => setListening(false);
-
-        recognitionRef.current = recognition;
-        recognition.start();
+            setMicError(`Could not start voice input: ${err.message}`);
+        }
     };
 
     // ── Image Handling ────────────────────────────────────────────────────────
@@ -93,7 +118,7 @@ export default function InputBox({ onAnalyze, loading }) {
     const handleSubmit = () => {
         if (!query.trim() || loading) return;
         if (listening) {
-            recognitionRef.current?.stop();
+            try { recognitionRef.current?.stop(); } catch (_) {}
             setListening(false);
         }
         onAnalyze({ query, images });
@@ -127,6 +152,22 @@ export default function InputBox({ onAnalyze, loading }) {
                     </div>
                 )}
             </div>
+
+            {/* Mic error message shown inline */}
+            <AnimatePresence>
+                {micError && (
+                    <motion.div
+                        className="mic-error-msg"
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <FaExclamationCircle className="mic-error-icon" />
+                        <span>{micError}</span>
+                        <button className="mic-error-dismiss" onClick={() => setMicError(null)}>✕</button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Image Previews */}
             <AnimatePresence>

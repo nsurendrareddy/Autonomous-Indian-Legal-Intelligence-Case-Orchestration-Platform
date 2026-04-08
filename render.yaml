@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: legalai-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    headers:
+      - path: /*
+        name: Permissions-Policy
+        value: "microphone=(self)"
+      - path: /*
+        name: Feature-Policy
+        value: "microphone 'self'"
+      - path: /*
+        name: Cross-Origin-Opener-Policy
+        value: same-origin-allow-popups

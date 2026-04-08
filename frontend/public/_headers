@@ -1,0 +1,4 @@
+/*
+  Permissions-Policy: microphone=(self)
+  Feature-Policy: microphone 'self'
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
