@@ -32,7 +32,7 @@ export default function Contact() {
 
         try {
             const response = await fetch(
-                "https://n8n-legalai.onrender.com/webhook/contact-us",
+                "http://localhost:5678/webhook-test/contact-us",
                 {
                     method: "POST",
                     headers: {
