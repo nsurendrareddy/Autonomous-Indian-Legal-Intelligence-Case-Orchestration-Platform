@@ -1,50 +1,69 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaMicrophone, FaMicrophoneSlash, FaImage, FaTimes, FaSearch } from 'react-icons/fa';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './InputBox.css';
 
 const MAX_IMAGES = 2;
 
 export default function InputBox({ onAnalyze, loading }) {
     const [query, setQuery] = useState('');
-    const [images, setImages] = useState([]);        // array of File objects (max 2)
-    const [previews, setPreviews] = useState([]);    // array of object-URLs
+    const [images, setImages] = useState([]);
+    const [previews, setPreviews] = useState([]);
+    const [listening, setListening] = useState(false);
     const fileRef = useRef(null);
+    const recognitionRef = useRef(null);
 
-    // ── Voice Recognition ────────────────────────────────────────────────────
-    const {
-        transcript,
-        listening,
-        resetTranscript,
-        browserSupportsSpeechRecognition,
-    } = useSpeechRecognition();
-
-    // Append transcribed text into the textarea in real time
-    useEffect(() => {
-        if (transcript) {
-            setQuery(transcript);
-        }
-    }, [transcript]);
-
+    // ── Voice Recognition (native Web Speech API – works on Render/HTTPS) ───
     const toggleMic = () => {
-        if (!browserSupportsSpeechRecognition) {
-            alert('Your browser does not support speech recognition. Please use Chrome or Edge.');
+        const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+            alert(
+                'Speech recognition is not supported in this browser.\n' +
+                'Please use Google Chrome or Microsoft Edge.'
+            );
             return;
         }
-        if (listening) {
-            SpeechRecognition.stopListening();
-        } else {
-            resetTranscript();
-            SpeechRecognition.startListening({ continuous: true, language: 'en-IN' });
-        }
-    };
 
-    // Stop mic automatically when user submits
-    const handleSubmit = () => {
-        if (!query.trim() || loading) return;
-        if (listening) SpeechRecognition.stopListening();
-        onAnalyze({ query, images });
+        // If already listening, stop
+        if (listening) {
+            recognitionRef.current?.stop();
+            setListening(false);
+            return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-IN';
+
+        recognition.onstart = () => setListening(true);
+
+        recognition.onresult = (e) => {
+            let fullTranscript = '';
+            for (let i = 0; i < e.results.length; i++) {
+                fullTranscript += e.results[i][0].transcript;
+            }
+            setQuery(fullTranscript);
+        };
+
+        recognition.onerror = (e) => {
+            setListening(false);
+            if (e.error === 'not-allowed') {
+                alert(
+                    'Microphone permission was denied.\n' +
+                    'Please allow microphone access in your browser settings and try again.'
+                );
+            } else if (e.error !== 'aborted') {
+                console.error('Speech recognition error:', e.error);
+            }
+        };
+
+        recognition.onend = () => setListening(false);
+
+        recognitionRef.current = recognition;
+        recognition.start();
     };
 
     // ── Image Handling ────────────────────────────────────────────────────────
@@ -61,7 +80,6 @@ export default function InputBox({ onAnalyze, loading }) {
         setImages(prev => [...prev, ...toAdd]);
         setPreviews(prev => [...prev, ...newPreviews]);
 
-        // reset file input so the same file can be re-selected after removal
         if (fileRef.current) fileRef.current.value = '';
     };
 
@@ -69,6 +87,16 @@ export default function InputBox({ onAnalyze, loading }) {
         URL.revokeObjectURL(previews[idx]);
         setImages(prev => prev.filter((_, i) => i !== idx));
         setPreviews(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    // ── Submit ─────────────────────────────────────────────────────────────────
+    const handleSubmit = () => {
+        if (!query.trim() || loading) return;
+        if (listening) {
+            recognitionRef.current?.stop();
+            setListening(false);
+        }
+        onAnalyze({ query, images });
     };
 
     const canAddMore = images.length < MAX_IMAGES;
