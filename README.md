@@ -264,5 +264,3 @@ You can import this code directly into your n8n workspace to recreate the workfl
 
 ---
 
-## 📝 License
-This project is licensed under the MIT License.
