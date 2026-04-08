@@ -31,8 +31,9 @@ export default function Contact() {
         e.preventDefault();
 
         try {
+            const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || "http://localhost:5678/webhook/contact-us";
             const response = await fetch(
-                "https://n8n-legalai.onrender.com/webhook/contact-us",
+                webhookUrl,
                 {
                     method: "POST",
                     headers: {

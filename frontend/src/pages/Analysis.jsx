@@ -15,7 +15,7 @@ export default function Analysis() {
     const [lawyers, setLawyers] = useState([]);
     const [error, setError] = useState(null);
 
-    const handleAnalyze = async ({ query, image }) => {
+    const handleAnalyze = async ({ query, images }) => {
         setLoading(true);
         setError(null);
         setAnalysis(null);
@@ -23,7 +23,9 @@ export default function Analysis() {
         try {
             const formData = new FormData();
             formData.append('query', query);
-            if (image) formData.append('image', image);
+            if (images && images.length > 0) {
+                images.forEach(img => formData.append('images', img));
+            }
 
             const token = localStorage.getItem('la_token');
             const { data } = await axios.post(`${API}/api/analysis`, formData, {

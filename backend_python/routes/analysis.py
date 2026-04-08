@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Form, File, UploadFile, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Optional
+from typing import Optional, List
 from services.groq_service import analyze_legal_issue
 from models.case import save_case
 from models.lawyer import get_lawyers_by_specializations, get_top_lawyers, SPECIALIZATION_MAP
@@ -47,10 +47,13 @@ def detect_category(report_text: str) -> str:
 @router.post("/analysis")
 async def analyze(
     query: str = Form(...),
-    image: Optional[UploadFile] = File(None),
+    images: List[UploadFile] = File(default=[]),
     imageContext: Optional[str] = Form(None),
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
 ):
+    # Enforce max 2 images
+    if len(images) > 2:
+        raise HTTPException(status_code=400, detail="Maximum 2 images allowed per analysis.")
     if not query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty")
 
@@ -91,10 +94,13 @@ async def analyze(
                 lawyers.append(l)
                 seen_names.add(l["name"])
 
-    # Save image if provided
-    image_url = None
-    if image and image.filename:
-        image_url = await save_upload(image)
+    # Save uploaded images (up to 2)
+    image_urls = []
+    for img in images:
+        if img and img.filename:
+            url = await save_upload(img)
+            image_urls.append(url)
+    image_url = ",".join(image_urls) if image_urls else None
 
     # Save case to DB
     case_data = {
