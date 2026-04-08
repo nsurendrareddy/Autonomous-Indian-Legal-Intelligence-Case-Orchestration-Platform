@@ -12,7 +12,7 @@
 
 *Describe your legal issue in plain language — get instant, AI-powered legal guidance based on Indian law.*
 
-[🚀 Live Demo](#) &nbsp;|&nbsp; [📖 API Docs](#api-documentation) &nbsp;|&nbsp; [🛠 Setup](#-local-setup--installation)
+[🚀 Live](https://autonomous-indian-legal-intelligence-mmrc.onrender.com/) [📖 API Docs](#api-documentation) &nbsp;|&nbsp; [🛠 Setup](#-local-setup--installation)
 
 </div>
 
